@@ -1,0 +1,61 @@
+package me.Trand.gems.Commands;
+
+import java.util.HashMap;
+
+import org.bukkit.Bukkit;
+import org.bukkit.Material;
+import org.bukkit.command.Command;
+import org.bukkit.command.CommandExecutor;
+import org.bukkit.command.CommandSender;
+import org.bukkit.entity.HumanEntity;
+import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
+
+public class GiveCommand implements CommandExecutor {
+	public static HashMap<String, Integer> criticallvl = new HashMap<String, Integer>();
+
+	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
+		if (cmd.getName().equalsIgnoreCase("gems")) {
+			if (!(sender instanceof Player)) {
+				sender.sendMessage("§cComando executável somente por jogadores in-game!.");
+				return true;
+			}
+			if (args.length > 0 || args.length < 4) {
+				if (args[0].equalsIgnoreCase("critical")) {
+					if (args[1].equalsIgnoreCase("give")) {
+						if (args[2] != null) {
+							Player target = Bukkit.getServer().getPlayer(args[2]);
+							if (!criticallvl.containsKey(target)) {
+								criticallvl.put(target.getName(), 0);
+							}
+							ItemStack item = new ItemStack(Material.EMERALD, 1);
+							ItemMeta meta = item.getItemMeta();
+							meta.setDisplayName("§c§lCRITICAL");
+							item.setItemMeta(meta);
+							target.getInventory().addItem(item);
+							target.updateInventory();
+							sender.sendMessage("§a * Gema de §c§lCRITICAL §aentregue!");
+							target.sendMessage("§a * Você recebeu uma gema de §c§lCRITICAL§a!.");
+						}
+					} else if (args.length == 2) {
+						if (args[1].equalsIgnoreCase("take")) {
+							if (!criticallvl.containsKey(sender)) {
+								criticallvl.put(sender.getName(), 0);
+							}
+							ItemStack item = new ItemStack(Material.EMERALD, 1);
+							ItemMeta meta = item.getItemMeta();
+							meta.setDisplayName("§c§lCRITICAL");
+							item.setItemMeta(meta);
+							((HumanEntity) sender).getInventory().addItem(item);
+							((Player) sender).updateInventory();
+							sender.sendMessage("§a * Gema de §c§lCRITICAL §aentregue!");
+						}
+					}
+				}
+			}
+		}
+
+		return false;
+	}
+}
